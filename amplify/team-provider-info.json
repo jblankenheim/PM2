@@ -1,0 +1,23 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-preventativemaintena-staging-165135-authRole",
+      "UnauthRoleArn": "arn:aws:iam::311064037995:role/amplify-preventativemaintena-staging-165135-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::311064037995:role/amplify-preventativemaintena-staging-165135-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-preventativemaintena-staging-165135-deployment",
+      "UnauthRoleName": "amplify-preventativemaintena-staging-165135-unauthRole",
+      "StackName": "amplify-preventativemaintena-staging-165135",
+      "StackId": "arn:aws:cloudformation:us-east-2:311064037995:stack/amplify-preventativemaintena-staging-165135/1e6dd030-e223-11ee-9edb-06549eea3803",
+      "AmplifyAppId": "d396aw4avx42vc"
+    },
+    "categories": {
+      "api": {
+        "PreventativeMaintenance": {}
+      },
+      "auth": {
+        "preventativemaintena513f0740": {}
+      }
+    }
+  }
+}
