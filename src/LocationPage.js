@@ -23,7 +23,7 @@ const LocationPage = () => {
   console.log("The facility is" + `${location}`)
   ////setting state variables
   const [facility, setFacility] = useState('');
-  const [equipPiece, setEquipPiece] = useState('');
+ 
 
 
   ///setting equipment array for use in updating equipment list.  Could not pull items directly from DOM
@@ -32,7 +32,12 @@ const LocationPage = () => {
   /////////////////////////////////////////////////////////////////////////testing popup.  Using popup now in function.
   const [modalIsOpen, setIsOpen] = useState(false);
   let subtitle;
+
+
+
+  
   function openModal() {
+  
     setIsOpen(true);
   }
 
@@ -108,7 +113,7 @@ const LocationPage = () => {
   //testing for existence of array
   console.log("Equipment data is #" + equipmentList.length)
 
-
+const[modalEquip, setModalEquip]=useState("");
 
   return (
   //  <div>Welcome to {facility.Name}</div> //just used this line as test while I blocked everything else off
@@ -119,9 +124,9 @@ const LocationPage = () => {
       </div>
 
 
-      <Container fluid >
+      <Container fluid style={{flexWrap: "wrap"}} >
 
-        <Row >
+        <row style={{flexWrap: "wrap"}}>
           {equipmentList.map((Equipment, index) => {
             return (
               <Col md="auto" key={Equipment.id ? Equipment.id : index}>
@@ -134,8 +139,9 @@ const LocationPage = () => {
                     <p style={{ fontWeight: "bold" }}> Drive Belt Size: &nbsp;{Equipment.DriveBeltSize}</p>
                     <p style={{ fontWeight: "bold" }}> Gear Box Size:  &nbsp; {Equipment.GearBoxSize}</p>
                     <p style={{ fontWeight: "bold" }}> Last Service Date:  &nbsp; {Equipment.ServiceDates.items.ServiceDate ? Equipment.ServiceDates.items.ServiceDate[0] : "not showing a date"}</p>
-                    <button value={Equipment.id} style={{ backgroundColor: "#21702f", borderRadius: "5px" }} onClick={openModal}>Add Service Date</button>
-                    <Modal
+                    <button key = {Equipment.id} value={Equipment} style={{ backgroundColor: "#21702f", borderRadius: "5px" }}  onClick={(e)=>{setModalEquip(Equipment); openModal()}}>Add Service Date</button>
+                    <Modal 
+                  
                       isOpen={modalIsOpen}
                       onAfterOpen={afterOpenModal}
                       onRequestClose={closeModal}
@@ -144,7 +150,7 @@ const LocationPage = () => {
                     >
                       <h2 ref={(_subtitle) => (subtitle = _subtitle)}></h2>
                       <button onClick={closeModal}>close</button>
-                      <AddServiceDate Equipment={Equipment}/>
+                      <AddServiceDate  Equipment={modalEquip} />
                   
                     </Modal>
 
@@ -156,7 +162,7 @@ const LocationPage = () => {
           )
           }
 
-        </Row>
+        </row>
       </Container>
 
     </body >
