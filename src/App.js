@@ -5,10 +5,11 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import { NavLink } from "react-router-dom";
+import { listLocations } from "./graphql/queries";
+
 import Home from './Home.js'
 import LocationPage from './LocationPage.js';
-import { listLocations } from "./graphql/queries";
+import ServiceDates from './ServiceDates.js';
 
 
 
@@ -45,6 +46,7 @@ async function fetchLocations() {
     <Routes>
         <Route path="/" element={<Home locations={locations}/>} />
         <Route path="/LocationPage/:location" element={<LocationPage />} />
+        <Route path="/ServiceDates/:id" element={<ServiceDates />}/>
     </Routes>
 </div>
   );

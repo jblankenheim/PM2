@@ -13,10 +13,10 @@ const AddServiceDate = ({ Equipment}) => {
     console.log("equipment id is " + Equipment.id)
     console.log("equipment name is " + Equipment.name)
     /////////////////Setting state variables
-    const [checkedBelt, setCheckedBelt] = useState(false);
-    const [checkedBearings, setCheckedBearings] = useState(false);
+    const [checkedBelt, setCheckedBelt] = useState("false");
+    const [checkedBearings, setCheckedBearings] = useState("false");
     const [notes, setNotes] = useState("");
-    const [greased, setGreased] = useState(false);
+    const [greased, setGreased] = useState("false");
     const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   
     const navigate = useNavigate();
@@ -88,11 +88,11 @@ const AddServiceDate = ({ Equipment}) => {
             <label>Date</label>
             <input type="date" placeholder="yyyy-MM-DD" onChange={(e) => setDate(e.target.value)}></input> <br />
             <label>Checked Belt?</label>
-            <input type="checkbox" defaultChecked="false" value="beltChecked" onChange={updateBelt} /> <br />
+            <input type="checkbox" defaultValue="false" onChange={updateBelt} /> <br />
             <label>Checked Bearings?</label>
-            <input type="checkbox" defaultChecked="false" value="bearingsChecked" onChange={updateBearings} /> <br />
+            <input type="checkbox"  defaultValue="false" onChange={updateBearings} /> <br />
             <label>Equipment Was Greased?</label>
-            <input type="checkbox" defaultChecked="false" value="greaseChecked" onChange={updateGreased} /><br />
+            <input type="checkbox"  defaultValue="false" onChange={updateGreased} /><br />
             <label style={{ fontWeight: "bold", fontSize: "20", backgroundColor: "grey" }}>Notes</label>
             <textarea style={{ display: "flex", width: "60%", inlineSize: "50%", textAlign: "left", verticalAlign: "top", overflowWrap: "break-word", height: "300px" }} type="text" width="80%" height="60%" value={notes} onChange={(e) => setNotes(e.target.value)} />
             <button type="submit" onClick={handleSubmitServiceDate}>submit Service Date</button>

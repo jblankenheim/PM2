@@ -1,18 +1,22 @@
-import ReactDOM from 'react-dom';
+
 import Modal from 'react-modal';
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
+import { Link , useNavigate} from "react-router-dom";
+
+import { format } from 'date-fns';
+
 import { generateClient } from 'aws-amplify/api';
 import { getLocation } from "./graphql/queries";
 import { equipmentByLocationID } from "./graphql/queries";
+
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import AddServiceDate from "./AddServiceDate";
-import Popup from 'reactjs-popup';
-import { createServiceDate } from "./graphql/mutations";
+import ServiceDates from './ServiceDates';
+
 
 const client = generateClient();
 
@@ -23,19 +27,18 @@ const LocationPage = () => {
   console.log("The facility is" + `${location}`)
   ////setting state variables
   const [facility, setFacility] = useState('');
- 
+  const navigate = useNavigate();
 
 
   ///setting equipment array for use in updating equipment list.  Could not pull items directly from DOM
 
   const [equipmentList, setEquipmentList] = useState([]);
-  /////////////////////////////////////////////////////////////////////////testing popup.  Using popup now in function.
+  //////////////////////////////////////////////////////////////setting Modal State
   const [modalIsOpen, setIsOpen] = useState(false);
   let subtitle;
+  const[modalEquip, setModalEquip]=useState("");
 
 
-
-  
   function openModal() {
   
     setIsOpen(true);
@@ -49,6 +52,15 @@ const LocationPage = () => {
   function closeModal() {
     setIsOpen(false);
   }
+
+//////////////////////////////////////////////////
+//setting state for data passed to Service Dates Link
+const[serviceDateData, setServiceDateData] = useState([]);
+
+
+
+
+
   /////////////////////////////////////////////////////////////////////
   ///setting facility data
   useEffect(() => {
@@ -112,8 +124,11 @@ const LocationPage = () => {
   console.log(equipmentList)
   //testing for existence of array
   console.log("Equipment data is #" + equipmentList.length)
+  console.log("the equipment List is "+ equipmentList)
+///////////////////////////////////////////
+//setting state to send to link
+////////////////////
 
-const[modalEquip, setModalEquip]=useState("");
 
   return (
   //  <div>Welcome to {facility.Name}</div> //just used this line as test while I blocked everything else off
@@ -126,20 +141,25 @@ const[modalEquip, setModalEquip]=useState("");
 
       <Container fluid style={{flexWrap: "wrap"}} >
 
-        <row style={{flexWrap: "wrap"}}>
+        <row style={{display: "flex", flexWrap: "wrap", width: "100%"}}>
           {equipmentList.map((Equipment, index) => {
             return (
               <Col md="auto" key={Equipment.id ? Equipment.id : index}>
 
-                <div key={Equipment.id} class="card" style={{ borderStyle: "double", borderRadius: "25px", width: "30%", margin: "auto auto auto 10%" }}>
+                  
+                <div key={Equipment.id} class="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
                   <Card class="card-body" style={{ margin: "auto auto auto 10%" }}>
                     <h2 class="card-title" style={{ fontSize: "24" }}> {Equipment.name}</h2>
                     <p class="card-text" style={{ margin: "2% 25% 2% 2%" }}>Equipment ID: {Equipment.id}</p>
                     <p style={{ fontWeight: "bold" }} > Bearing Size:  &nbsp;&nbsp;&nbsp; &nbsp; {Equipment.BearingSize}</p>
                     <p style={{ fontWeight: "bold" }}> Drive Belt Size: &nbsp;{Equipment.DriveBeltSize}</p>
                     <p style={{ fontWeight: "bold" }}> Gear Box Size:  &nbsp; {Equipment.GearBoxSize}</p>
-                    <p style={{ fontWeight: "bold" }}> Last Service Date:  &nbsp; {Equipment.ServiceDates.items.ServiceDate ? Equipment.ServiceDates.items.ServiceDate[0] : "not showing a date"}</p>
-                    <button key = {Equipment.id} value={Equipment} style={{ backgroundColor: "#21702f", borderRadius: "5px" }}  onClick={(e)=>{setModalEquip(Equipment); openModal()}}>Add Service Date</button>
+                    
+                    <p style={{ fontWeight: "bold" }}> <Link to={{pathname: `/ServiceDates/${Equipment.id}`, state: {id : Equipment.id}}}>Last Service Date:  &nbsp; {Equipment.ServiceDates.items? format(Equipment.ServiceDates.items[0].createdAt, "yyyy-MM-dd") : "not showing a date"}</Link></p>    
+                   
+                    <button key = {Equipment.id} value={Equipment} style={{ backgroundColor: "#21702f", borderRadius: "5px" }}  onClick={(e)=>{setModalEquip(Equipment); openModal()}}>Add Service Date</button> <br/>
+                    <label for="notes" style={{fontWeight: "bold", color: "#e35a0b"}}>Latest Notes</label> <br/>
+                    <textarea name="notes" rows="4" style={{width: "90%", backgroundColor: "#92969c" }}value={Equipment.ServiceDates.items[1].notes} readOnly={true}></textarea>
                     <Modal 
                   
                       isOpen={modalIsOpen}
@@ -150,7 +170,7 @@ const[modalEquip, setModalEquip]=useState("");
                     >
                       <h2 ref={(_subtitle) => (subtitle = _subtitle)}></h2>
                       <button onClick={closeModal}>close</button>
-                      <AddServiceDate  Equipment={modalEquip} />
+                      <AddServiceDate modalIsOpen={modalIsOpen} Equipment={modalEquip} />
                   
                     </Modal>
 

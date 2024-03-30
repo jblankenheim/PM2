@@ -50,13 +50,15 @@ export const serviceDatesByEquipmentID = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
+        createdAt
         id
+        ServiceDate
         Greased
         CheckedBelt
         CheckedBearings
         equipmentID
-        createdAt
         updatedAt
+        notes
       }
       nextToken
     }
@@ -184,6 +186,7 @@ export const equipmentByLocationID = /* GraphQL */ `
             Greased
             CheckedBelt
             CheckedBearings
+            notes
           }
         }
       }
