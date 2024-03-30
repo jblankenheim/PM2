@@ -26,7 +26,9 @@ const ServiceDates = () => {
     try {
       const serviceData = await client.graphql({
         query: serviceDatesByEquipmentID,
-        variables: { equipmentID: `${equipmentid}` }
+        variables: { equipmentID: `${equipmentid}` ,
+      sortDirection: 'Desc',
+    sortField: 'createdAt'}
       });
       console.log("logging stuff to console")
       var servDates = serviceData.data.serviceDatesByEquipmentID.items;

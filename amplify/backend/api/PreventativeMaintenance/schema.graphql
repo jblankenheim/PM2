@@ -1,10 +1,10 @@
-type ServiceDate @model @auth(rules: [{allow: public}]) @key(fields: ["createdAt"]){
+type ServiceDate @model @auth(rules: [{allow: public}]) {
   id: ID!
   Greased: Boolean
   CheckedBelt: Boolean
-  CheckedBearings: Boolean
+  CheckedBearings: String
   equipmentID: ID! @index(name: "byEquipment")
-  ServiceDate: AWSDate 
+  ServiceDate: AWSDate
 }
 
 type Location @model @auth(rules: [{allow: public}]) {
