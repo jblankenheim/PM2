@@ -2,7 +2,7 @@ type ServiceDate @model @auth(rules: [{allow: public}]) @key(fields: ["createdAt
   id: ID!
   Greased: Boolean
   CheckedBelt: Boolean
-  CheckedBearings: String
+  CheckedBearings: Boolean
   equipmentID: ID! @index(name: "byEquipment")
   ServiceDate: AWSDate 
 }
