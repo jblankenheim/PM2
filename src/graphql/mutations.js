@@ -32,6 +32,7 @@ export const updateServiceDate = /* GraphQL */ `
       ServiceDate
       createdAt
       updatedAt
+      notes
     }
   }
 `;
@@ -49,6 +50,7 @@ export const deleteServiceDate = /* GraphQL */ `
       ServiceDate
       createdAt
       updatedAt
+      notes
     }
   }
 `;

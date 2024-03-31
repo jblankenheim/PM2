@@ -24,9 +24,7 @@ console.log(locations)
           </Link>
         </div>
       ))}
-      <Button variant="primary" size="lg">
-        Add Location
-      </Button>
+   
     </div>
   )
 };

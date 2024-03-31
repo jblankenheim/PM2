@@ -12,6 +12,7 @@ export const getServiceDate = /* GraphQL */ `
       ServiceDate
       createdAt
       updatedAt
+      notes
     }
   }
 `;
@@ -31,6 +32,7 @@ export const listServiceDates = /* GraphQL */ `
         ServiceDate
         createdAt
         updatedAt
+        notes
       }
       nextToken
     }
@@ -51,32 +53,49 @@ export const serviceDatesByEquipmentID = /* GraphQL */ `
       limit: $limit
       nextToken: $nextToken
     ) {
+   
       items {
-        id
-        Greased
-        CheckedBelt
         CheckedBearings
-        equipmentID
+        CheckedBelt
+        Greased
         ServiceDate
         createdAt
-        updatedAt
+        equipmentID
+        id
+        notes
       }
-      nextToken
     }
   }
 `;
 export const getLocation = /* GraphQL */ `
   query GetLocation($id: ID!) {
     getLocation(id: $id) {
-      id
-      Name
-      Equipment {
-        nextToken
+        Name
+        id
+        Equipment {
+          items {
+            BearingSize
+            DriveBeltSize
+            GearBoxSize
+            createdAt
+            id
+            name
+            ServiceDates {
+              items {
+                CheckedBearings
+                CheckedBelt
+                ServiceDate
+                createdAt
+                equipmentID
+                id
+                notes
+              }
+            }
+          }
+        }
       }
-      createdAt
-      updatedAt
     }
-  }
+    
 `;
 export const listLocations = /* GraphQL */ `
   query ListLocations(
@@ -166,6 +185,7 @@ export const equipmentByLocationID = /* GraphQL */ `
         locationID
         createdAt
         updatedAt
+        notes
       }
       nextToken
     }
