@@ -11,6 +11,7 @@ import Card from 'react-bootstrap/Card';
 
 
 const client = generateClient();
+
 const ServiceDates = () => {
   const params = useParams();
   const equipmentid = params.id;
@@ -26,11 +27,12 @@ const ServiceDates = () => {
     try {
       const serviceData = await client.graphql({
         query: serviceDatesByEquipmentID,
-        variables: { equipmentID: `${equipmentid}` ,
-      sortDirection: 'Desc',
-    sortField: 'createdAt'}
+        sort: {direction: "desc", field: "createdAt"},
+        variables : {  equipmentID: `${equipmentid}`
+      }
+   
       });
-      console.log("logging stuff to console")
+    
       var servDates = serviceData.data.serviceDatesByEquipmentID.items;
       setServiceDates(servDates)
       console.log("servDates is" + servDates)
@@ -63,16 +65,16 @@ const ServiceDates = () => {
             return (
               <Col md="auto" key={Date.id ? Date.id : index}>
 
-                <div key={Date.id} class="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
-                  <Card class="card-body" style={{ margin: "auto auto auto 10%" }}>
-                    <h2 class="card-title" style={{ fontSize: "24" }}> </h2>
-                    <p class="card-text" style={{ margin: "2% 25% 2% 2%" }}>Date: {Date.ServiceDate}</p>
+                <div key={Date.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
+                  <Card className="card-body" style={{ margin: "auto auto auto 10%" }}>
+                    <h2 className="card-title" style={{ fontSize: "24" }}> </h2>
+                    <p className="card-text" style={{ margin: "2% 25% 2% 2%" }}>Date: {Date.ServiceDate}</p>
                     <p style={{ fontWeight: "bold" }} > Bearing :  &nbsp;&nbsp;&nbsp; &nbsp; {Date.CheckedBearings}</p>
                     <p style={{ fontWeight: "bold" }}> Drive Belt : &nbsp;{Date.CheckedBelt}</p>
                     <p style={{ fontWeight: "bold" }}> Greased :  &nbsp; {Date.Greased}</p>
 
-                    <label for="notes" style={{ fontWeight: "bold", color: "#e35a0b" }}> Notes</label> <br />
-                    <textarea name="notes" rows="4" style={{ width: "90%", backgroundColor: "#92969c" }} value={Date.notes} readOnly={true}></textarea>
+                    <label  style={{ fontWeight: "bold", color: "#e35a0b" }}> Notes</label> <br />
+                    <textarea name="notes" rows="4" style={{ width: "90%", backgroundColor: "#92969c" }} value={Date.notes? Date.notes: "---"} readOnly={true}></textarea>
 
                   </Card>
                 </div>

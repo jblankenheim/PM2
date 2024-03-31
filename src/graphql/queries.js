@@ -9,6 +9,7 @@ export const getServiceDate = /* GraphQL */ `
       CheckedBelt
       CheckedBearings
       equipmentID
+      ServiceDate
       createdAt
       updatedAt
     }
@@ -27,6 +28,7 @@ export const listServiceDates = /* GraphQL */ `
         CheckedBelt
         CheckedBearings
         equipmentID
+        ServiceDate
         createdAt
         updatedAt
       }
@@ -50,15 +52,14 @@ export const serviceDatesByEquipmentID = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
-        createdAt
         id
-        ServiceDate
         Greased
         CheckedBelt
         CheckedBearings
         equipmentID
+        ServiceDate
+        createdAt
         updatedAt
-        notes
       }
       nextToken
     }
@@ -70,25 +71,7 @@ export const getLocation = /* GraphQL */ `
       id
       Name
       Equipment {
-        items {
-          name
-          id
-          GearBoxSize
-          DriveBeltSize
-          BearingSize
-          locationID
-          ServiceDates(sortDirection: DESC) {
-            items {
-              id
-              ServiceDate
-              equipmentID
-              createdAt
-              Greased
-              CheckedBelt
-              CheckedBearings
-            }
-          }
-        }
+        nextToken
       }
       createdAt
       updatedAt
@@ -124,6 +107,12 @@ export const getEquipment = /* GraphQL */ `
       locationID
       ServiceDates {
         nextToken
+      }
+      Location {
+        id
+        Name
+        createdAt
+        updatedAt
       }
       createdAt
       updatedAt
@@ -177,18 +166,6 @@ export const equipmentByLocationID = /* GraphQL */ `
         locationID
         createdAt
         updatedAt
-        ServiceDates(sortDirection: DESC) {
-          items {
-            id
-            ServiceDate
-            equipmentID
-            createdAt
-            Greased
-            CheckedBelt
-            CheckedBearings
-            notes
-          }
-        }
       }
       nextToken
     }

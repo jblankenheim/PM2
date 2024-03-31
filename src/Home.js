@@ -3,7 +3,7 @@
 
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import { NavLink, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const Home = ({locations}) => {
