@@ -285,7 +285,7 @@ return (
                   <p style={{ fontWeight: "bold" }}> Drive Belt Size: &nbsp;{Equipment.DriveBeltSize}</p>
                   <p style={{ fontWeight: "bold" }}> Gear Box Size:  &nbsp; {Equipment.GearBoxSize}</p>
 
-                  <p style={{ fontWeight: "bold" }}> <Link to={{ pathname: `/ServiceDates/${Equipment.id}`, state: { id: Equipment.id } }}>Last Service Date: {Equipment.ServiceDates.items.length > 0 ? Equipment.ServiceDates.items[0].createdAt : "no dates"} </Link></p>
+                  <p style={{ fontWeight: "bold" }}> <Link to={{ pathname: `/ServiceDates/${Equipment.id}`, state: { id: Equipment.id } }}>Last Service Date: {Equipment.ServiceDates.items.length > 0 ? format(Equipment.ServiceDates.items[0].createdAt, "yyyy-MM-dd") : "no dates"} </Link></p>
 
                   <button key={Equipment.id} value={Equipment} style={{ backgroundColor: "#21702f", borderRadius: "5px" }} onClick={(e) => { setModalEquip(Equipment); openModal() }}>Add Service Date</button> <button onClick={() => { setUpdateModalEquipmentID(Equipment.id); setUpdateModalEquipmentName(Equipment.name); openUpdateModal() }}>Update Equipment</button><br />
                   <label for="notes" style={{ fontWeight: "bold", color: "#e35a0b" }}>Latest Notes</label> <br />

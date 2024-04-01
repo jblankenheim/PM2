@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-
+import { getCurrentUser } from 'aws-amplify/auth';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { listLocations } from "./graphql/queries";
-
+import {Amplify} from 'aws-amplify';
 import Home from './Home.js'
 import LocationPage from './LocationPage.js';
 import ServiceDates from './ServiceDates.js';
@@ -18,13 +18,19 @@ const client = generateClient();
 
 function App({ signOut, user }) {
 
+
+
+ 
 const [locations, setLocations] = useState([]);
  
 
 useEffect(() => {
+ 
   fetchLocations();
-}, []);
 
+
+}, []);
+//////////////////////////////////
 
 async function fetchLocations() {
   try {
@@ -37,12 +43,15 @@ async function fetchLocations() {
     console.log('error fetching locations');
   }
 }
+console.log(user.data)
   return (
   <div className="App">
     <>
       <h1>Hello {user.username}</h1>
       <button onClick={signOut} >Sign out</button>
+      
     </>
+    
     <Routes>
         <Route path="/" element={<Home locations={locations}/>} />
         <Route path="/LocationPage/:location" element={<LocationPage />} />
