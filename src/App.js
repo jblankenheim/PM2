@@ -1,12 +1,12 @@
 
 import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { Route, Routes } from 'react-router-dom';
+
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { listLocations } from "./graphql/queries";
-import {Amplify} from 'aws-amplify';
+
 import Home from './Home.js'
 import LocationPage from './LocationPage.js';
 import ServiceDates from './ServiceDates.js';

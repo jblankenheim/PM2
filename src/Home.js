@@ -2,8 +2,8 @@
 
 
 import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
-import { Link, useNavigate } from "react-router-dom";
+
+import { Link} from "react-router-dom";
 
 
 const Home = ({locations}) => {

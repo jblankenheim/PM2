@@ -26,7 +26,7 @@ const LocationPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const location = params.location;
-  console.log("The facility is" + `${location}`)
+
   ////setting state variables
   const [facility, setFacility] = useState([]);
 
