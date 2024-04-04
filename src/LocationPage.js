@@ -165,7 +165,7 @@ const LocationPage = () => {
     finally {
 
       ////////navigating out of modal 
-      closeUpdateModal();
+      setNewEquipModalIsOpen(false);
 
     }
 
