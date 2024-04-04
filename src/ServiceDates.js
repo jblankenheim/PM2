@@ -10,19 +10,27 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import { Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const client = generateClient();
 
 const ServiceDates = () => {
   const params = useParams();
   const equipmentid = params.id;
-
+const navigate = useNavigate();
   console.log("the equipment id is " + equipmentid)
   const [serviceDates, setServiceDates] = useState([]);
 
   useEffect(() => {
     getServiceDates();
   }, []);
+
+/////////////////////////
+//defining a back button
+const backOne=()=> {
+  navigate(-1);
+}
+
 
   async function getServiceDates() {
     try {
@@ -90,9 +98,10 @@ const ServiceDates = () => {
 
     <body style={{ backgroundColor: "#2067b3" }}>
       <h1 style={{ fontWeight: "bold", fontSize: "150%", textDecoration: "underline" }}>
-        Service Dates
-      </h1>
-
+        Service Dates    <button onClick={backOne} style={{fontSize: "16", marginLeft: "10%"}}>Back to Location</button>
+             </h1> 
+             
+            
 
 
       <Container fluid style={{ flexWrap: "wrap" }} >

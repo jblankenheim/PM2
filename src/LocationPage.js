@@ -234,6 +234,7 @@ async function handleUpdateEquipment() {
   }
   finally{
     setUpdateModalIsOpen(false);
+    getfacility();
   }
 
 
