@@ -165,7 +165,7 @@ const LocationPage = () => {
     finally {
 
       ////////navigating out of modal 
-      navigate(0);
+      closeUpdateModal();
 
     }
 
@@ -223,7 +223,7 @@ async function handleUpdateEquipment() {
     //query graphql using imported query for facility data.  used appsync to edit quer
 
     console.log("Success!");
-
+   
     //    console.log(response.JSON)
     //testing in consol
 
@@ -232,12 +232,8 @@ async function handleUpdateEquipment() {
     console.log('error updating equipment');
 
   }
-
-  finally {
-
-    ////////navigating out of modal 
-    navigate(0);
-
+  finally{
+    setUpdateModalIsOpen(false);
   }
 
 
