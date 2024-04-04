@@ -12,7 +12,8 @@ export const createServiceDate = /* GraphQL */ `
       CheckedBelt
       CheckedBearings
       equipmentID
-      ServiceDate
+      dateOfService
+      notes
       createdAt
       updatedAt
     }
@@ -29,10 +30,10 @@ export const updateServiceDate = /* GraphQL */ `
       CheckedBelt
       CheckedBearings
       equipmentID
-      ServiceDate
+      dateOfService
+      notes
       createdAt
       updatedAt
-      notes
     }
   }
 `;
@@ -47,10 +48,10 @@ export const deleteServiceDate = /* GraphQL */ `
       CheckedBelt
       CheckedBearings
       equipmentID
-      ServiceDate
+      dateOfService
+      notes
       createdAt
       updatedAt
-      notes
     }
   }
 `;

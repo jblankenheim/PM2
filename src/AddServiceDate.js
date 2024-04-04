@@ -44,6 +44,7 @@ const AddServiceDate = ({ Equipment}) => {
         CheckedBelt: `${checkedBelt}`,
         CheckedBearings: `${checkedBearings}`,
         equipmentID: `${Equipment.id}`,
+        dateOfService: `${date}`,
         notes: `${notes}`
     };
 

@@ -11,7 +11,8 @@ export const onCreateServiceDate = /* GraphQL */ `
       CheckedBelt
       CheckedBearings
       equipmentID
-      ServiceDate
+      dateOfService
+      notes
       createdAt
       updatedAt
     }
@@ -27,7 +28,8 @@ export const onUpdateServiceDate = /* GraphQL */ `
       CheckedBelt
       CheckedBearings
       equipmentID
-      ServiceDate
+      dateOfService
+      notes
       createdAt
       updatedAt
     }
@@ -43,7 +45,8 @@ export const onDeleteServiceDate = /* GraphQL */ `
       CheckedBelt
       CheckedBearings
       equipmentID
-      ServiceDate
+      dateOfService
+      notes
       createdAt
       updatedAt
     }

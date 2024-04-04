@@ -26,7 +26,7 @@ const LocationPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const location = params.location;
-
+  
   ////setting state variables
   const [facility, setFacility] = useState([]);
 
@@ -91,6 +91,7 @@ const LocationPage = () => {
 
     } catch (err) {
       console.log('error fetching facility');
+      console.log("the location id is" + location)
     }
   }
 

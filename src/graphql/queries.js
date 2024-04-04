@@ -10,9 +10,9 @@ export const getServiceDate = /* GraphQL */ `
       CheckedBearings
       equipmentID
       ServiceDate
+      notes
       createdAt
       updatedAt
-      notes
     }
   }
 `;
@@ -30,9 +30,9 @@ export const listServiceDates = /* GraphQL */ `
         CheckedBearings
         equipmentID
         ServiceDate
+        notes
         createdAt
         updatedAt
-        notes
       }
       nextToken
     }
@@ -53,49 +53,55 @@ export const serviceDatesByEquipmentID = /* GraphQL */ `
       limit: $limit
       nextToken: $nextToken
     ) {
-   
       items {
-        CheckedBearings
-        CheckedBelt
-        Greased
-        ServiceDate
-        createdAt
-        equipmentID
         id
+        Greased
+        CheckedBelt
+        CheckedBearings
+        equipmentID
+        dateOfService
         notes
+        createdAt
+        updatedAt
       }
+      nextToken
     }
   }
 `;
 export const getLocation = /* GraphQL */ `
   query GetLocation($id: ID!) {
     getLocation(id: $id) {
-        Name
-        id
-        Equipment {
+      id
+      Name
+      Equipment {
+        items{
+          name
+          id
+          cupSize
+          createdAt
+          GearBoxSize
+          DriveBeltSize
+          BearingSize
+        ServiceDates{
           items {
-            BearingSize
-            DriveBeltSize
-            GearBoxSize
-            createdAt
+            notes
             id
-            name
-            ServiceDates {
-              items {
-                CheckedBearings
-                CheckedBelt
-                ServiceDate
-                createdAt
-                equipmentID
-                id
-                notes
-              }
-            }
+            equipmentID
+            dateOfService
+            createdAt
+            Greased
+            CheckedBelt
+            CheckedBearings
           }
         }
+
+        }
+        nextToken
       }
+      createdAt
+      updatedAt
     }
-    
+  }
 `;
 export const listLocations = /* GraphQL */ `
   query ListLocations(
@@ -185,7 +191,6 @@ export const equipmentByLocationID = /* GraphQL */ `
         locationID
         createdAt
         updatedAt
-        notes
       }
       nextToken
     }
