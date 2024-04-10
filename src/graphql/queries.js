@@ -82,6 +82,7 @@ export const getLocation = /* GraphQL */ `
           GearBoxSize
           DriveBeltSize
           BearingSize
+          Picture
         ServiceDates{
           items {
             notes

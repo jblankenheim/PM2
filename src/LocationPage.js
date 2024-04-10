@@ -6,7 +6,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
-
+import { Amplify } from 'aws-amplify';
+import { getUrl, uploadData, remove } from 'aws-amplify/storage'
+import config from './aws-exports';
 import { generateClient } from 'aws-amplify/api';
 import { getLocation } from "./graphql/queries";
 import { createEquipment } from './graphql/mutations';
@@ -16,6 +18,21 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import AddServiceDate from './AddServiceDate';
 import { Card } from 'react-bootstrap';
+import {Storage} from "aws-amplify";
+
+
+
+Amplify.configure(config, {
+  Storage: {
+    S3: {
+      // configures default access level
+      defaultAccessLevel: 'public'
+    }
+  }
+})
+
+
+
 
 
 
@@ -26,11 +43,11 @@ const LocationPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const location = params.location;
-  
+
   ////setting state variables
   const [facility, setFacility] = useState([]);
 
-
+ 
 
   ///setting equipment array for use in updating equipment list.  Could not pull items directly from DOM
 
@@ -176,7 +193,7 @@ const LocationPage = () => {
   //////////////////////Creating Modal to update Equipment///////////////////////////////////////
   const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
   const [updateModalEquipmentID, setUpdateModalEquipmentID] = useState("")
-  const[updateModalEquipmentName, setUpdateModalEquipmentName]=useState("");
+  const [updateModalEquipmentName, setUpdateModalEquipmentName] = useState("");
   const [updateModalBearing, setUpdateModalBearing] = useState("");
   const [updateModalDriveBelt, setUpdateModalDriveBelt] = useState("");
   const [updateModalGearBox, setUpdateModalGearBox] = useState("");
@@ -187,160 +204,226 @@ const LocationPage = () => {
 
 
 
-function openUpdateModal() {
+  function openUpdateModal() {
 
-  setUpdateModalIsOpen(true);
-}
+    setUpdateModalIsOpen(true);
+  }
 
-function afterOpenUpdateModal() {
+  function afterOpenUpdateModal() {
 
-  // references are now sync'd and can be accessed.
-
-}
-
-function closeUpdateModal() {
-  setUpdateModalIsOpen(false);
-}
-//////////details for equipment update///////
-const updateEquipDetails = {
-  id: `${updateModalEquipmentID}`,
-  
-  DriveBeltSize: `${updateModalDriveBelt}`,
-  BearingSize: `${updateModalBearing}`,
-  GearBoxSize: `${updateModalGearBox}`,
-  cupSize: `${updateModalCupSize}`,
-}
-
-
-////////////////////////////////////////
-async function handleUpdateEquipment() {
-  try {
-    await client.graphql({
-      query: updateEquipment,
-      variables: { input: updateEquipDetails }
-    }
-    );
-    //query graphql using imported query for facility data.  used appsync to edit quer
-
-    console.log("Success!");
-   
-    //    console.log(response.JSON)
-    //testing in consol
-
-
-  } catch (err) {
-    console.log('error updating equipment');
+    // references are now sync'd and can be accessed.
 
   }
-  finally{
+
+  function closeUpdateModal() {
     setUpdateModalIsOpen(false);
-    getfacility();
+  }
+  //////////details for equipment update///////
+  const updateEquipDetails = {
+    id: `${updateModalEquipmentID}`,
+
+    DriveBeltSize: `${updateModalDriveBelt}`,
+    BearingSize: `${updateModalBearing}`,
+    GearBoxSize: `${updateModalGearBox}`,
+    cupSize: `${updateModalCupSize}`,
   }
 
 
+  ////////////////////////////////////////
+  async function handleUpdateEquipment() {
+    try {
+      await client.graphql({
+        query: updateEquipment,
+        variables: { input: updateEquipDetails }
+      }
+      );
+      //query graphql using imported query for facility data.  used appsync to edit quer
+
+      console.log("Success!");
+
+      //    console.log(response.JSON)
+      //testing in consol
+
+
+    } catch (err) {
+      console.log('error updating equipment');
+
+    }
+    finally {
+      setUpdateModalIsOpen(false);
+      getfacility();
+    }
+
+    ///////////////////////////////
+    //adding picture functionality//////////
+
+  }
+
+/////////////////////////////////////////////////////////////
+//picture
+const [picEquip, setPicEquip]=useState('');
+
+const [CurrentImageUrl, setCurrentImageUrl] = useState("");
+console.log("The current image url is " + CurrentImageUrl)
+async function addNewImageToEquipment(e) {
+ // if (!currentSong) return;
+
+  if (!e.target.files) return;
+
+  const file = e.target.files[0];
+
+  try {
+    // Upload the Storage file:
+    const result = await uploadData({
+      key: `${picEquip.id}-${picEquip.name}`,
+      data: file,
+      options: {
+        contentType: 'image/png' // contentType is optional
+      }
+    }).result;
+    
+    console.log("the result is " + result.key)
+    const signedURL = await getUrl({ key: result.key });
+    const equipImage=signedURL.url.toString();
+
+    const updateEquipmentDetails = {
+      id: `${picEquip.id}`,
+      Picture: `${equipImage}`,
+    };
+
+    // Add the file association to the record:
+    const response = await client.graphql({
+      query: updateEquipment,
+      variables: { input: updateEquipmentDetails }
+    });
+
+    const updatedEquipment = response.data.updateEquipment;
+    
+   // console.log("The current image url is " + signedURL.url.toString())
+   // setCurrentSong(updatedEquipment);
+    getfacility();
+    // If the record has no associated file, we can return early.
+    if (!updatedEquipment?.Picture) return;
+
+    // Retrieve the file's signed URL:
+    
+   // setCurrentImageUrl(signedURL.url.toString());
+  } catch (error) {
+    console.error('Error uploading image for equipment: ', error);
+  }
 }
 
 
 
+  return (
+
+    <body style={{ backgroundColor: "#2067b3" }}>
+      <div style={{ fontWeight: "bold", fontSize: "150%" }}>
+        Welcome to {facility.Name}
+        <h1 style={{ fontSize: "150%", fontWeight: "bold", textAlign: "center", textDecoration: "underline" }}>Equipment</h1>
+        <button onClick={openNewEquipModal}>Add New Equipment</button>
+        <Modal
+
+          isOpen={newEquipModalIsOpen}
+          onAfterOpen={afterOpenNewEquipModal}
+          onRequestClose={closeNewEquipModal}
+
+          contentLabel="New Equpment Modal"
+        >
+
+          <button onClick={closeNewEquipModal}>close</button>
+          <input type="text" value={modalNewEquipName} onChange={(e) => setModalNewEquipName(e.target.value)}></input>
+          <button type="submit" onClick={submitNewEquipment}>Submit New Equipment</button>
+        </Modal>
+      </div>
 
 
-return (
+      <Container fluid style={{ flexWrap: "wrap" }} >
 
-  <body style={{ backgroundColor: "#2067b3" }}>
-    <div style={{ fontWeight: "bold", fontSize: "150%" }}>
-      Welcome to {facility.Name}
-      <h1 style={{ fontSize: "150%", fontWeight: "bold", textAlign: "center", textDecoration: "underline" }}>Equipment</h1>
-      <button onClick={openNewEquipModal}>Add New Equipment</button>
-      <Modal
-
-        isOpen={newEquipModalIsOpen}
-        onAfterOpen={afterOpenNewEquipModal}
-        onRequestClose={closeNewEquipModal}
-
-        contentLabel="New Equpment Modal"
-      >
-
-        <button onClick={closeNewEquipModal}>close</button>
-        <input type="text" value={modalNewEquipName} onChange={(e) => setModalNewEquipName(e.target.value)}></input>
-        <button type="submit" onClick={submitNewEquipment}>Submit New Equipment</button>
-      </Modal>
-    </div>
+        <Row style={{ display: "flex", flexWrap: "wrap", width: "80%" }}>
+          {equipmentList.map((Equipment, index) => {
+          
+            return (
+              <Col md="auto" key={Equipment.id ? Equipment.id : index}>
 
 
-    <Container fluid style={{ flexWrap: "wrap" }} >
+                <div key={Equipment.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
+                  <Card className="card-body" style={{ margin: "auto auto auto 10%" }}>
+                    <Card.Img variant="top" src={Equipment.Picture} style={{height: "150px", width: "150px", margin: "5px"}} alt="image picture"/>
+                    <h2 className="card-title" style={{ fontSize: "24", margin: "5px" }}> {Equipment.name}</h2> 
+                    
+                    <label style={{fontWeight: "bold"}}>
+                      Add/Update Equipment Image:
+                      <input 
+                        onClick={(e) =>  setPicEquip(Equipment)}
+                        id="name"
+                        type="file"
+                        onChange={addNewImageToEquipment}
+                      />
+                    </label>
+                    <p className="card-text" style={{ margin: "2% 25% 2% 2%" }}>Equipment ID: {Equipment.id}</p>
+                    <p style={{ fontWeight: "bold" }} > Bearing Size:  &nbsp;&nbsp;&nbsp; &nbsp; {Equipment.BearingSize}</p>
+                    <p style={{ fontWeight: "bold" }}> Drive Belt Size: &nbsp;{Equipment.DriveBeltSize}</p>
+                    <p style={{ fontWeight: "bold" }}> Gear Box Size:  &nbsp; {Equipment.GearBoxSize}</p>
 
-      <Row style={{ display: "flex", flexWrap: "wrap", width: "100%" }}>
-        {equipmentList.map((Equipment, index) => {
-          return (
-            <Col md="auto" key={Equipment.id ? Equipment.id : index}>
+                    <p style={{ fontWeight: "bold" }}> <Link to={{ pathname: `/ServiceDates/${Equipment.id}`, state: { id: Equipment.id } }}>Last Service Date: {Equipment.ServiceDates.items.length > 0 ? format(Equipment.ServiceDates.items[0].createdAt, "yyyy-MM-dd") : "no dates"} </Link></p>
+
+                    <button key={Equipment.id} value={Equipment} style={{ backgroundColor: "#21702f", borderRadius: "5px" }} onClick={(e) => { setModalEquip(Equipment); openModal() }}>Add Service Date</button> <button onClick={() => { setUpdateModalEquipmentID(Equipment.id); setUpdateModalEquipmentName(Equipment.name); openUpdateModal() }}>Update Equipment</button><br />
+                    <label for="notes" style={{ fontWeight: "bold", color: "#e35a0b" }}>Latest Notes</label> <br />
+                    <textarea name="notes" rows="4" style={{ width: "90%", backgroundColor: "#92969c" }} value={Equipment.ServiceDates.items.length > 0 ? Equipment.ServiceDates.items[0].notes : "no notes"} readOnly={true}></textarea>
+
+                    <Modal
 
 
-              <div key={Equipment.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
-                <Card className="card-body" style={{ margin: "auto auto auto 10%" }}>
-                  <h2 className="card-title" style={{ fontSize: "24" }}> {Equipment.name}</h2>
-                  <p className="card-text" style={{ margin: "2% 25% 2% 2%" }}>Equipment ID: {Equipment.id}</p>
-                  <p style={{ fontWeight: "bold" }} > Bearing Size:  &nbsp;&nbsp;&nbsp; &nbsp; {Equipment.BearingSize}</p>
-                  <p style={{ fontWeight: "bold" }}> Drive Belt Size: &nbsp;{Equipment.DriveBeltSize}</p>
-                  <p style={{ fontWeight: "bold" }}> Gear Box Size:  &nbsp; {Equipment.GearBoxSize}</p>
+                      isOpen={updateModalIsOpen}
+                      onAfterOpen={afterOpenUpdateModal}
+                      onRequestClose={closeUpdateModal}
 
-                  <p style={{ fontWeight: "bold" }}> <Link to={{ pathname: `/ServiceDates/${Equipment.id}`, state: { id: Equipment.id } }}>Last Service Date: {Equipment.ServiceDates.items.length > 0 ? format(Equipment.ServiceDates.items[0].createdAt, "yyyy-MM-dd") : "no dates"} </Link></p>
-
-                  <button key={Equipment.id} value={Equipment} style={{ backgroundColor: "#21702f", borderRadius: "5px" }} onClick={(e) => { setModalEquip(Equipment); openModal() }}>Add Service Date</button> <button onClick={() => { setUpdateModalEquipmentID(Equipment.id); setUpdateModalEquipmentName(Equipment.name); openUpdateModal() }}>Update Equipment</button><br />
-                  <label for="notes" style={{ fontWeight: "bold", color: "#e35a0b" }}>Latest Notes</label> <br />
-                  <textarea name="notes" rows="4" style={{ width: "90%", backgroundColor: "#92969c" }} value={Equipment.ServiceDates.items.length > 0 ? Equipment.ServiceDates.items[0].notes : "no notes"} readOnly={true}></textarea>
-
-                  <Modal
-                  
-
-                    isOpen={updateModalIsOpen}
-                    onAfterOpen={afterOpenUpdateModal}
-                    onRequestClose={closeUpdateModal}
-
-                    contentLabel="update Equip Modal"
-                  >
-                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}></h2>
-                    <button onClick={closeUpdateModal}>close</button>
-                    <h2>{updateModalEquipmentName}</h2>
-                    <label>Bearing Size</label>
-                    <input type="text" value={updateModalBearing} onChange={(e) => setUpdateModalBearing(e.target.value)}></input><br />
-                    <label>Drive Belt Size</label>
-                    <input type="text" value={updateModalDriveBelt} onChange={(e) => setUpdateModalDriveBelt(e.target.value)}></input> <br />
-                    <label>Gear Box Size</label>
-                    <input type="text" value={updateModalGearBox} onChange={(e) => setUpdateModalGearBox(e.target.value)}></input><br />
-                    <label>Cupsize/ChainLink Size</label>
-                    <input type="text" value={updateModalCupSize} onChange={(e) => setUpdateModalCupSize(e.target.value)}></input>
-                    <button type="submit" onClick={handleUpdateEquipment}>Click to add Updates</button>
-                  </Modal>
+                      contentLabel="update Equip Modal"
+                    >
+                      <h2 ref={(_subtitle) => (subtitle = _subtitle)}></h2>
+                      <button onClick={closeUpdateModal}>close</button>
+                      <h2>{updateModalEquipmentName}</h2>
+                      <label>Bearing Size</label>
+                      <input type="text" value={updateModalBearing} onChange={(e) => setUpdateModalBearing(e.target.value)}></input><br />
+                      <label>Drive Belt Size</label>
+                      <input type="text" value={updateModalDriveBelt} onChange={(e) => setUpdateModalDriveBelt(e.target.value)}></input> <br />
+                      <label>Gear Box Size</label>
+                      <input type="text" value={updateModalGearBox} onChange={(e) => setUpdateModalGearBox(e.target.value)}></input><br />
+                      <label>Cupsize/ChainLink Size</label>
+                      <input type="text" value={updateModalCupSize} onChange={(e) => setUpdateModalCupSize(e.target.value)}></input>
+                      <button type="submit" onClick={handleUpdateEquipment}>Click to add Updates</button>
+                    </Modal>
 
 
 
 
-                  <Modal
+                    <Modal
 
-                    isOpen={modalIsOpen}
-                    onAfterOpen={afterOpenModal}
-                    onRequestClose={closeModal}
+                      isOpen={modalIsOpen}
+                      onAfterOpen={afterOpenModal}
+                      onRequestClose={closeModal}
 
-                    contentLabel="Example Modal"
-                  >
-                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}></h2>
-                    <button onClick={closeModal}>close</button>
-                    <AddServiceDate modalIsOpen={modalIsOpen} Equipment={modalEquip} />
+                      contentLabel="Example Modal"
+                    >
+                      <h2 ref={(_subtitle) => (subtitle = _subtitle)}></h2>
+                      <button onClick={closeModal}>close</button>
+                      <AddServiceDate modalIsOpen={modalIsOpen} Equipment={modalEquip} />
 
-                  </Modal>
+                    </Modal>
 
-                </Card>
-              </div>
-            </Col>
+                  </Card>
+                </div>
+              </Col>
+            )
+          }
           )
-        }
-        )
-        }
+          }
 
-      </Row>
-    </Container>
+        </Row>
+      </Container>
 
-  </body >
-)
-      }
+    </body >
+  )
+}
 export default LocationPage;

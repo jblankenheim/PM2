@@ -17,6 +17,17 @@
       },
       "auth": {
         "preventativemaintena513f0740": {}
+      },
+      "storage": {
+        "preventativemaintena3fb0b9d5": {
+          "bucketName": "preventativemaintenance-storage-12ac9db9165135-staging",
+          "region": "us-east-2"
+        },
+        "s3preventativemaintenancestorage12ac9db9": {},
+        "preventativemaintena919f5369": {
+          "bucketName": "s3preventativemaintenancestorage12ac9db9",
+          "region": "us-east-2"
+        }
       }
     }
   }

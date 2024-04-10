@@ -1,13 +1,11 @@
 type ServiceDate @model @auth(rules: [{allow: public}]) {
-  id: ID! @primaryKey(sortKeyFields: ["createdAt"])
+  id: ID!
   Greased: Boolean
   CheckedBelt: Boolean
   CheckedBearings: Boolean
   equipmentID: ID! @index(name: "byEquipment")
   dateOfService: AWSDate
   notes: String
-  createdAt: AWSDate!
-  
 }
 
 type Location @model @auth(rules: [{allow: public}]) {
@@ -26,5 +24,6 @@ type Equipment @model @auth(rules: [{allow: public}]) {
   locationID: ID! @index(name: "byLocation")
   ServiceDates: [ServiceDate] @hasMany(indexName: "byEquipment", fields: ["id"])
   Location: Location @belongsTo(fields: ["locationID"])
+  Picture: AWSURL
 }
  
