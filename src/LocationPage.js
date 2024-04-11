@@ -47,7 +47,7 @@ const LocationPage = () => {
   ////setting state variables
   const [facility, setFacility] = useState([]);
 
- 
+
 
   ///setting equipment array for use in updating equipment list.  Could not pull items directly from DOM
 
@@ -81,8 +81,9 @@ const LocationPage = () => {
   /////////////////////////////////////////////////////////////////////
   ///setting facility data
   useEffect(() => {
+   
     getfacility();
-
+    
 
   }, []);
 
@@ -105,12 +106,35 @@ const LocationPage = () => {
       setFacility(facdata);
       console.log(facdata);
       setEquipmentList(equipdata)
+      
 
     } catch (err) {
       console.log('error fetching facility');
       console.log("the location id is" + location)
     }
+ 
+   
   }
+
+  ///////getting equipment pictures////////
+  async function getPhotos(){
+    try {
+      equipmentList.forEach(async (equipment) => {
+        const signedURL = await getUrl({ key: equipment.Picture })
+        const equipImage = signedURL.url.toString()
+        
+      document.getElementById(equipment.Picture).src =equipImage
+        
+       
+      }
+    )
+    }
+    catch (error) {
+      console.log(error + "error loading images")
+    }
+
+  }
+
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -259,59 +283,59 @@ const LocationPage = () => {
 
   }
 
-/////////////////////////////////////////////////////////////
-//picture
-const [picEquip, setPicEquip]=useState('');
+  /////////////////////////////////////////////////////////////
+  //picture
+  const [picEquip, setPicEquip] = useState('');
 
-const [CurrentImageUrl, setCurrentImageUrl] = useState("");
-console.log("The current image url is " + CurrentImageUrl)
-async function addNewImageToEquipment(e) {
- // if (!currentSong) return;
 
-  if (!e.target.files) return;
 
-  const file = e.target.files[0];
+  async function addNewImageToEquipment(e) {
+    // if (!currentSong) return;
 
-  try {
-    // Upload the Storage file:
-    const result = await uploadData({
-      key: `${picEquip.id}-${picEquip.name}`,
-      data: file,
-      options: {
-        contentType: 'image/png' // contentType is optional
-      }
-    }).result;
-    
-    console.log("the result is " + result.key)
-    const signedURL = await getUrl({ key: result.key });
-    const equipImage=signedURL.url.toString();
+    if (!e.target.files) return;
 
-    const updateEquipmentDetails = {
-      id: `${picEquip.id}`,
-      Picture: `${equipImage}`,
-    };
+    const file = e.target.files[0];
 
-    // Add the file association to the record:
-    const response = await client.graphql({
-      query: updateEquipment,
-      variables: { input: updateEquipmentDetails }
-    });
+    try {
+      // Upload the Storage file:
+      const result = await uploadData({
+        key: `${picEquip.id}-${picEquip.name}`,
+        data: file,
+        options: {
+          contentType: 'image/png' // contentType is optional
+        }
+      }).result;
 
-    const updatedEquipment = response.data.updateEquipment;
-    
-   // console.log("The current image url is " + signedURL.url.toString())
-   // setCurrentSong(updatedEquipment);
-    getfacility();
-    // If the record has no associated file, we can return early.
-    if (!updatedEquipment?.Picture) return;
+      console.log("the result is " + result.key)
 
-    // Retrieve the file's signed URL:
-    
-   // setCurrentImageUrl(signedURL.url.toString());
-  } catch (error) {
-    console.error('Error uploading image for equipment: ', error);
+
+      const updateEquipmentDetails = {
+        id: `${picEquip.id}`,
+        Picture: result.key,
+      };
+
+      // Add the file association to the record:
+      const response = await client.graphql({
+        query: updateEquipment,
+        variables: { input: updateEquipmentDetails }
+      });
+
+      const updatedEquipment = response.data.updateEquipment;
+
+      // console.log("The current image url is " + signedURL.url.toString())
+      // setCurrentSong(updatedEquipment);
+      getfacility();
+      getPhotos();
+      // If the record has no associated file, we can return early.
+      if (!updatedEquipment?.Picture) return;
+
+      // Retrieve the file's signed URL:
+
+      // setCurrentImageUrl(signedURL.url.toString());
+    } catch (error) {
+      console.error('Error uploading image for equipment: ', error);
+    }
   }
-}
 
 
 
@@ -342,20 +366,20 @@ async function addNewImageToEquipment(e) {
 
         <Row style={{ display: "flex", flexWrap: "wrap" }}>
           {equipmentList.map((Equipment, index) => {
-          
+            {getPhotos()}
             return (
               <Col md="auto" key={Equipment.id ? Equipment.id : index}>
 
 
                 <div key={Equipment.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
                   <Card className="card-body" style={{ margin: "auto auto auto 10%" }}>
-                    <img variant="top" src={Equipment.Picture} style={{height: "150px", width: "150px", margin: "5px"}} alt="equipment picture"/>
-                    <h2 className="card-title" style={{ fontSize: "24", margin: "5px" }}> {Equipment.name}</h2> 
-                    
-                    <label style={{fontWeight: "bold"}}>
+                    <img id={Equipment.Picture} variant="top" src="" style={{ height: "150px", width: "150px", margin: "5px" }} alt="equipment " />
+                    <h2 className="card-title" style={{ fontSize: "24", margin: "5px" }}> {Equipment.name}</h2>
+
+                    <label style={{ fontWeight: "bold" }}>
                       Add/Update Equipment Image:
-                      <input 
-                        onClick={(e) =>  setPicEquip(Equipment)}
+                      <input
+                        onClick={(e) => setPicEquip(Equipment)}
                         id="name"
                         type="file"
                         onChange={addNewImageToEquipment}
