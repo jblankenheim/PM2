@@ -18,7 +18,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import AddServiceDate from './AddServiceDate';
 import { Card } from 'react-bootstrap';
-import {Storage} from "aws-amplify";
+
 
 
 
@@ -340,16 +340,16 @@ async function addNewImageToEquipment(e) {
 
       <Container fluid style={{ flexWrap: "wrap" }} >
 
-        <Row style={{ display: "flex", flexWrap: "wrap", width: "80%" }}>
+        <Row style={{ display: "flex", flexWrap: "wrap" }}>
           {equipmentList.map((Equipment, index) => {
           
             return (
               <Col md="auto" key={Equipment.id ? Equipment.id : index}>
 
 
-                <div key={Equipment.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "25%" }}>
+                <div key={Equipment.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
                   <Card className="card-body" style={{ margin: "auto auto auto 10%" }}>
-                    <Card.Img variant="top" src={Equipment.Picture} style={{height: "150px", width: "150px", margin: "5px"}} alt="image picture"/>
+                    <img variant="top" src={Equipment.Picture} style={{height: "150px", width: "150px", margin: "5px"}} alt="equipment picture"/>
                     <h2 className="card-title" style={{ fontSize: "24", margin: "5px" }}> {Equipment.name}</h2> 
                     
                     <label style={{fontWeight: "bold"}}>
