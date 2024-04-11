@@ -347,7 +347,7 @@ async function addNewImageToEquipment(e) {
               <Col md="auto" key={Equipment.id ? Equipment.id : index}>
 
 
-                <div key={Equipment.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "auto" }}>
+                <div key={Equipment.id} className="card" style={{ borderStyle: "double", borderRadius: "25px", width: "25%" }}>
                   <Card className="card-body" style={{ margin: "auto auto auto 10%" }}>
                     <Card.Img variant="top" src={Equipment.Picture} style={{height: "150px", width: "150px", margin: "5px"}} alt="image picture"/>
                     <h2 className="card-title" style={{ fontSize: "24", margin: "5px" }}> {Equipment.name}</h2> 

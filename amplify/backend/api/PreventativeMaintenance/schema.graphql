@@ -24,6 +24,6 @@ type Equipment @model @auth(rules: [{allow: public}]) {
   locationID: ID! @index(name: "byLocation")
   ServiceDates: [ServiceDate] @hasMany(indexName: "byEquipment", fields: ["id"])
   Location: Location @belongsTo(fields: ["locationID"])
-  Picture: AWSURL
+  Picture: String
 }
  
