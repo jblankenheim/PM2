@@ -1,0 +1,150 @@
+type Conveyor @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  conveyorName: String
+  facilityArea: String
+  pictureKeys: String
+  gearDriveSize: String
+  motorSize: String
+  chainSize: String
+  beltWidth: String
+  conveyorType: String
+  conveyorLength: String
+  bearingSize: String
+  bushelPerHour: String
+  brandName: String
+  driveBeltSize: String
+  numberOfDriveBelts: String
+  locationID: ID! @index(name: "byLocation")
+  ServiceDates: [ServiceDate] @hasMany(indexName: "byConveyor", fields: ["id"])
+  WorkOrders: [WorkOrder] @hasMany(indexName: "byConveyor", fields: ["id"])
+}
+
+type DistributorServiceDate @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  notes: String
+  pictureKeys: String
+  passFail: ServiceDateEnum
+  distributorID: ID! @index(name: "byDistributor")
+}
+
+type OtherServiceDate @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  notes: String
+  pictureKeys: String
+  passFail: ServiceDateEnum
+  otherID: ID! @index(name: "byOther")
+}
+
+enum ServiceDateEnum {
+  PASS
+  FAIL
+  NEEDSWORK
+}
+
+enum CostEnum {
+  LOCATION
+  MILLRIGHTPROGRAM
+}
+
+type Cost @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  costFor: String
+  Amount: Float
+  billTo: CostEnum
+  pictureKeys: String
+  workorderID: ID! @index(name: "byWorkOrder")
+  Date: AWSDate
+  locationID: String
+}
+
+type WorkOrder @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  openDate: String
+  equipmentName: String
+  equipmentLocation: String
+  discription: String
+  closedDate: String
+  approvedBy: String
+  closedBy: String
+  notes: String
+  pictureKeys: String
+  legID: ID! @index(name: "byLeg")
+  distributorID: ID! @index(name: "byDistributor")
+  otherID: ID! @index(name: "byOther")
+  conveyorID: ID! @index(name: "byConveyor")
+  Costs: [Cost] @hasMany(indexName: "byWorkOrder", fields: ["id"])
+}
+
+type ServiceDate @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  greased: String
+  checkedBelt: String
+  checkedOil: String
+  pictureKeys: String
+  passFail: ServiceDateEnum
+  notes: String
+  legID: ID! @index(name: "byLeg")
+  conveyorID: ID! @index(name: "byConveyor")
+}
+
+type Other @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  otherName: String
+  otherType: String
+  facilityArea: String
+  notes: String
+  locationID: ID! @index(name: "byLocation")
+  OtherServiceDates: [OtherServiceDate] @hasMany(indexName: "byOther", fields: ["id"])
+  WorkOrders: [WorkOrder] @hasMany(indexName: "byOther", fields: ["id"])
+  driveBeltSize: String
+}
+
+type Distributor @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  distributorName: String
+  facilityArea: String
+  numberOfSpouts: String
+  spoutSize: Int
+  distributorBrandName: String
+  pictureKeys: String
+  notes: String
+  locationID: ID! @index(name: "byLocation")
+  DistributorServiceDates: [DistributorServiceDate] @hasMany(indexName: "byDistributor", fields: ["id"])
+  WorkOrders: [WorkOrder] @hasMany(indexName: "byDistributor", fields: ["id"])
+}
+
+type Leg @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  legName: String
+  facilityArea: String
+  pictureKeys: String
+  motorSize: String
+  secondMotorSize: String
+  gearDriveSize: String
+  driveBeltSize: String
+  numberOfDriveBelts: Int
+  bearingSize: String
+  shaftSize: Float
+  beltingWidth: String
+  lagging: String
+  cupSize: String
+  legHeight: String
+  bushelPerHour: Int
+  BrandName: String
+  notes: String
+  locationID: ID! @index(name: "byLocation")
+  ServiceDates: [ServiceDate] @hasMany(indexName: "byLeg", fields: ["id"])
+  WorkOrders: [WorkOrder] @hasMany(indexName: "byLeg", fields: ["id"])
+}
+
+type Location @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  locationName: String
+  Lat: String
+  Long: String
+  pictureKeys: String
+  Legs: [Leg] @hasMany(indexName: "byLocation", fields: ["id"])
+  Conveyors: [Conveyor] @hasMany(indexName: "byLocation", fields: ["id"])
+  Distributors: [Distributor] @hasMany(indexName: "byLocation", fields: ["id"])
+  Others: [Other] @hasMany(indexName: "byLocation", fields: ["id"])
+}
