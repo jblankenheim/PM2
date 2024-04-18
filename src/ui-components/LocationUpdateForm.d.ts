@@ -6,29 +6,46 @@
 
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
-import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { Location } from "../models";
+export declare type EscapeHatchProps = {
+    [elementHierarchy: string]: Record<string, unknown>;
+} | null;
+export declare type VariantValues = {
+    [key: string]: string;
+};
+export declare type Variant = {
+    variantValues: VariantValues;
+    overrides: EscapeHatchProps;
+};
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type LocationUpdateFormInputValues = {
-    Name?: string;
+    locationName?: string;
+    Lat?: string;
+    Long?: string;
+    pictureKeys?: string;
 };
 export declare type LocationUpdateFormValidationValues = {
-    Name?: ValidationFunction<string>;
+    locationName?: ValidationFunction<string>;
+    Lat?: ValidationFunction<string>;
+    Long?: ValidationFunction<string>;
+    pictureKeys?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type LocationUpdateFormOverridesProps = {
     LocationUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    Name?: PrimitiveOverrideProps<TextFieldProps>;
+    locationName?: PrimitiveOverrideProps<TextFieldProps>;
+    Lat?: PrimitiveOverrideProps<TextFieldProps>;
+    Long?: PrimitiveOverrideProps<TextFieldProps>;
+    pictureKeys?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type LocationUpdateFormProps = React.PropsWithChildren<{
     overrides?: LocationUpdateFormOverridesProps | undefined | null;
 } & {
     id?: string;
-    location?: Location;
+    location?: any;
     onSubmit?: (fields: LocationUpdateFormInputValues) => LocationUpdateFormInputValues;
     onSuccess?: (fields: LocationUpdateFormInputValues) => void;
     onError?: (fields: LocationUpdateFormInputValues, errorMessage: string) => void;

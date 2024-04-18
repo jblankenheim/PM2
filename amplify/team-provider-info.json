@@ -1,34 +1,15 @@
 {
-  "staging": {
+  "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-preventativemaintena-staging-165135-authRole",
-      "UnauthRoleArn": "arn:aws:iam::311064037995:role/amplify-preventativemaintena-staging-165135-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::311064037995:role/amplify-preventativemaintena-staging-165135-authRole",
+      "AuthRoleName": "amplify-pm2-dev-8f779-authRole",
+      "UnauthRoleArn": "arn:aws:iam::311064037995:role/amplify-pm2-dev-8f779-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::311064037995:role/amplify-pm2-dev-8f779-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-preventativemaintena-staging-165135-deployment",
-      "UnauthRoleName": "amplify-preventativemaintena-staging-165135-unauthRole",
-      "StackName": "amplify-preventativemaintena-staging-165135",
-      "StackId": "arn:aws:cloudformation:us-east-2:311064037995:stack/amplify-preventativemaintena-staging-165135/1e6dd030-e223-11ee-9edb-06549eea3803",
-      "AmplifyAppId": "d396aw4avx42vc"
-    },
-    "categories": {
-      "api": {
-        "PreventativeMaintenance": {}
-      },
-      "auth": {
-        "preventativemaintena513f0740": {}
-      },
-      "storage": {
-        "preventativemaintena3fb0b9d5": {
-          "bucketName": "preventativemaintenance-storage-12ac9db9165135-staging",
-          "region": "us-east-2"
-        },
-        "s3preventativemaintenancestorage12ac9db9": {},
-        "preventativemaintena919f5369": {
-          "bucketName": "s3preventativemaintenancestorage12ac9db9",
-          "region": "us-east-2"
-        }
-      }
+      "DeploymentBucketName": "amplify-pm2-dev-8f779-deployment",
+      "UnauthRoleName": "amplify-pm2-dev-8f779-unauthRole",
+      "StackName": "amplify-pm2-dev-8f779",
+      "StackId": "arn:aws:cloudformation:us-east-2:311064037995:stack/amplify-pm2-dev-8f779/05950d60-fd41-11ee-90f6-025cdc21ddfb",
+      "AmplifyAppId": "d25tkjkesff151"
     }
   }
 }

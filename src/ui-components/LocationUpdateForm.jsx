@@ -7,14 +7,15 @@
 /* eslint-disable */
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
-import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { Location } from "../models";
-import { fetchByPath, validateField } from "./utils";
-import { DataStore } from "aws-amplify";
+import { fetchByPath, getOverrideProps, validateField } from "./utils";
+import { generateClient } from "aws-amplify/api";
+import { getLocation } from "../graphql/queries";
+import { updateLocation } from "../graphql/mutations";
+const client = generateClient();
 export default function LocationUpdateForm(props) {
   const {
     id: idProp,
-    location,
+    location: locationModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -24,30 +25,51 @@ export default function LocationUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    Name: "",
+    locationName: "",
+    Lat: "",
+    Long: "",
+    pictureKeys: "",
   };
-  const [Name, setName] = React.useState(initialValues.Name);
+  const [locationName, setLocationName] = React.useState(
+    initialValues.locationName
+  );
+  const [Lat, setLat] = React.useState(initialValues.Lat);
+  const [Long, setLong] = React.useState(initialValues.Long);
+  const [pictureKeys, setPictureKeys] = React.useState(
+    initialValues.pictureKeys
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = locationRecord
       ? { ...initialValues, ...locationRecord }
       : initialValues;
-    setName(cleanValues.Name);
+    setLocationName(cleanValues.locationName);
+    setLat(cleanValues.Lat);
+    setLong(cleanValues.Long);
+    setPictureKeys(cleanValues.pictureKeys);
     setErrors({});
   };
-  const [locationRecord, setLocationRecord] = React.useState(location);
+  const [locationRecord, setLocationRecord] = React.useState(locationModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
-        ? await DataStore.query(Location, idProp)
-        : location;
+        ? (
+            await client.graphql({
+              query: getLocation.replaceAll("__typename", ""),
+              variables: { id: idProp },
+            })
+          )?.data?.getLocation
+        : locationModelProp;
       setLocationRecord(record);
     };
     queryData();
-  }, [idProp, location]);
+  }, [idProp, locationModelProp]);
   React.useEffect(resetStateValues, [locationRecord]);
   const validations = {
-    Name: [],
+    locationName: [],
+    Lat: [],
+    Long: [],
+    pictureKeys: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -75,7 +97,10 @@ export default function LocationUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          Name,
+          locationName: locationName ?? null,
+          Lat: Lat ?? null,
+          Long: Long ?? null,
+          pictureKeys: pictureKeys ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -101,21 +126,26 @@ export default function LocationUpdateForm(props) {
         }
         try {
           Object.entries(modelFields).forEach(([key, value]) => {
-            if (typeof value === "string" && value.trim() === "") {
-              modelFields[key] = undefined;
+            if (typeof value === "string" && value === "") {
+              modelFields[key] = null;
             }
           });
-          await DataStore.save(
-            Location.copyOf(locationRecord, (updated) => {
-              Object.assign(updated, modelFields);
-            })
-          );
+          await client.graphql({
+            query: updateLocation.replaceAll("__typename", ""),
+            variables: {
+              input: {
+                id: locationRecord.id,
+                ...modelFields,
+              },
+            },
+          });
           if (onSuccess) {
             onSuccess(modelFields);
           }
         } catch (err) {
           if (onError) {
-            onError(modelFields, err.message);
+            const messages = err.errors.map((e) => e.message).join("\n");
+            onError(modelFields, messages);
           }
         }
       }}
@@ -123,28 +153,112 @@ export default function LocationUpdateForm(props) {
       {...rest}
     >
       <TextField
-        label="Name"
+        label="Location name"
         isRequired={false}
         isReadOnly={false}
-        value={Name}
+        value={locationName}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              Name: value,
+              locationName: value,
+              Lat,
+              Long,
+              pictureKeys,
             };
             const result = onChange(modelFields);
-            value = result?.Name ?? value;
+            value = result?.locationName ?? value;
           }
-          if (errors.Name?.hasError) {
-            runValidationTasks("Name", value);
+          if (errors.locationName?.hasError) {
+            runValidationTasks("locationName", value);
           }
-          setName(value);
+          setLocationName(value);
         }}
-        onBlur={() => runValidationTasks("Name", Name)}
-        errorMessage={errors.Name?.errorMessage}
-        hasError={errors.Name?.hasError}
-        {...getOverrideProps(overrides, "Name")}
+        onBlur={() => runValidationTasks("locationName", locationName)}
+        errorMessage={errors.locationName?.errorMessage}
+        hasError={errors.locationName?.hasError}
+        {...getOverrideProps(overrides, "locationName")}
+      ></TextField>
+      <TextField
+        label="Lat"
+        isRequired={false}
+        isReadOnly={false}
+        value={Lat}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              locationName,
+              Lat: value,
+              Long,
+              pictureKeys,
+            };
+            const result = onChange(modelFields);
+            value = result?.Lat ?? value;
+          }
+          if (errors.Lat?.hasError) {
+            runValidationTasks("Lat", value);
+          }
+          setLat(value);
+        }}
+        onBlur={() => runValidationTasks("Lat", Lat)}
+        errorMessage={errors.Lat?.errorMessage}
+        hasError={errors.Lat?.hasError}
+        {...getOverrideProps(overrides, "Lat")}
+      ></TextField>
+      <TextField
+        label="Long"
+        isRequired={false}
+        isReadOnly={false}
+        value={Long}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              locationName,
+              Lat,
+              Long: value,
+              pictureKeys,
+            };
+            const result = onChange(modelFields);
+            value = result?.Long ?? value;
+          }
+          if (errors.Long?.hasError) {
+            runValidationTasks("Long", value);
+          }
+          setLong(value);
+        }}
+        onBlur={() => runValidationTasks("Long", Long)}
+        errorMessage={errors.Long?.errorMessage}
+        hasError={errors.Long?.hasError}
+        {...getOverrideProps(overrides, "Long")}
+      ></TextField>
+      <TextField
+        label="Picture keys"
+        isRequired={false}
+        isReadOnly={false}
+        value={pictureKeys}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              locationName,
+              Lat,
+              Long,
+              pictureKeys: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.pictureKeys ?? value;
+          }
+          if (errors.pictureKeys?.hasError) {
+            runValidationTasks("pictureKeys", value);
+          }
+          setPictureKeys(value);
+        }}
+        onBlur={() => runValidationTasks("pictureKeys", pictureKeys)}
+        errorMessage={errors.pictureKeys?.errorMessage}
+        hasError={errors.pictureKeys?.hasError}
+        {...getOverrideProps(overrides, "pictureKeys")}
       ></TextField>
       <Flex
         justifyContent="space-between"
@@ -157,7 +271,7 @@ export default function LocationUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || location)}
+          isDisabled={!(idProp || locationModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -169,7 +283,7 @@ export default function LocationUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || location) ||
+              !(idProp || locationModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}

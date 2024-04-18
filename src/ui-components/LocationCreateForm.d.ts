@@ -6,22 +6,40 @@
 
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
-import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
+export declare type EscapeHatchProps = {
+    [elementHierarchy: string]: Record<string, unknown>;
+} | null;
+export declare type VariantValues = {
+    [key: string]: string;
+};
+export declare type Variant = {
+    variantValues: VariantValues;
+    overrides: EscapeHatchProps;
+};
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
 };
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type LocationCreateFormInputValues = {
-    Name?: string;
+    locationName?: string;
+    Lat?: string;
+    Long?: string;
+    pictureKeys?: string;
 };
 export declare type LocationCreateFormValidationValues = {
-    Name?: ValidationFunction<string>;
+    locationName?: ValidationFunction<string>;
+    Lat?: ValidationFunction<string>;
+    Long?: ValidationFunction<string>;
+    pictureKeys?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type LocationCreateFormOverridesProps = {
     LocationCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
-    Name?: PrimitiveOverrideProps<TextFieldProps>;
+    locationName?: PrimitiveOverrideProps<TextFieldProps>;
+    Lat?: PrimitiveOverrideProps<TextFieldProps>;
+    Long?: PrimitiveOverrideProps<TextFieldProps>;
+    pictureKeys?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type LocationCreateFormProps = React.PropsWithChildren<{
     overrides?: LocationCreateFormOverridesProps | undefined | null;
